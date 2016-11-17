@@ -113,7 +113,16 @@ class Platformsh
 
         $this->log("Compiling generated files.");
 
-        $this->execute("php bin/magento setup:di:compile-multi-tenant");
+        //this changed at 2.1.0 so we'll try for below 2.1 and then catch when this fails to use the more modern method
+        try {
+
+            #the runtime exception is throw from line 431 of execute
+            $this->execute("php bin/magento setup:di:compile-multi-tenant");
+
+        } catch (\RuntimeException $e)
+        {
+            $this->execute("php bin/magento setup:di:compile");
+        }
     }
 
     /**
